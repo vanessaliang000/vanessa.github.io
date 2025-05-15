@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="心动时刻 - 专为18-25岁年轻人设计的心脏健康评估">
+    <meta name="theme-color" content="#5D4777">
+    <title>心动时刻 | HP药厂</title>
+    <link rel="stylesheet" href="css/landing.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+</head>
+<body>
+    <!-- 自定义光标 - 21tsi风格 -->
+    <div class="custom-cursor"></div>
+    <div class="custom-cursor-follower"></div>
+
+    <!-- 加载动画 -->
+    <div class="loader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <span class="hp-logo">HP</span>
+                <span class="hp-logo-dot"></span>
+            </div>
+            <div class="loader-counter">
+                <span id="loader-percent">0</span>
+            </div>
+            <div class="loader-bar">
+                <div class="loader-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 动态背景 -->
+    <div class="line-background"></div>
+    <div class="particle-container" id="particles"></div>
+
+    <!-- 声音切换 -->
+    <div class="sound-toggle">
+        <span>SOUND</span>
+    </div>
+
+    <!-- 主内容 -->
+    <main class="landing-content">
+        <div class="content-left">
+            <div class="title-container">
+                <h1 class="landing-title">
+                    <span class="title-line">心动时刻</span>
+                    <span class="title-line">了解你的心脏</span>
+                </h1>
+                <div class="heart-rate-animation">
+                    <svg viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg">
+                        <path class="heart-line" d="M0,50 L30,50 L45,20 L60,80 L75,20 L90,80 L105,20 L120,80 L135,50 L400,50" stroke="#5D4777" stroke-width="2" fill="none"/>
+                    </svg>
+                </div>
+                <p class="landing-subtitle">重新思考年轻人的心脏健康</p>
+            </div>
+            <div class="landing-stats">
+                <div class="stat-item">
+                    <div class="stat-number">90%</div>
+                    <div class="stat-text">年轻人不知道自己存在潜在心脏问题</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">70%</div>
+                    <div class="stat-text">心脏问题可通过早期预防</div>
+                </div>
+            </div>
+            <div class="landing-action">
+                <a href="assessment.html" class="action-button">
+                    <span>开始评估</span>
+                </a>
+                <div class="scroll-prompt">向下滚动了解更多</div>
+            </div>
+        </div>
+        <div class="content-right">
+            <div class="pill-visual">
+                <div class="pill-3d" id="pill-model"></div>
+                <div class="pill-shadow"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="landing-footer">
+        <div class="footer-content">
+            <div class="footer-logo">HP</div>
+            <div class="footer-links">
+                <a href="#">关于我们</a>
+                <a href="#">联系方式</a>
+                <a href="#">隐私政策</a>
+            </div>
+            <div class="footer-copyright">© 2023 HP药厂. 保留所有权利.</div>
+        </div>
+    </footer>
+
+    <!-- 脚本 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="js/landing.js"></script>
+</body>
+</html> 
