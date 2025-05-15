@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="心动时刻 - 专为18-25岁年轻人设计的心脏健康评估">
+    <meta name="theme-color" content="#9d76c7">
+    <title>心动时刻 | HP药厂</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/landing.css">
+    <link rel="stylesheet" href="css/mobile.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <!-- 添加Three.js库，用于3D药丸模型 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- 添加GSAP库，用于高级动画 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <!-- 添加Chart.js库，用于图表 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- 移动设备优化 -->
+    <script src="js/mobile.js"></script>
+</head>
+<body>
+    <!-- 21tsi风格的加载屏幕 -->
+    <div class="loading-overlay">
+        <div class="loading-logo"><img src="img/hp-logo.svg" alt="HP药厂" width="150" height="75"></div>
+        <div class="loading-progress">
+            <div class="loading-progress-bar"></div>
+            <div class="loading-percentage" id="loading-counter">0</div>
+        </div>
+        <div class="loading-message">加载中...</div>
+    </div>
+
+    <!-- 21tsi风格的着陆页 -->
+    <div class="landing-page">
+        <div class="landing-header">
+            <div class="landing-logo"><img src="img/hp-logo.svg" alt="HP" width="80" height="40"></div>
+            <div class="landing-nav-btn">联系我们</div>
+        </div>
+        
+        <div class="landing-hero">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span>心动时刻</span>
+                    <span>了解你的</span>
+                    <span>心脏健康</span>
+                </h1>
+                <p class="hero-subtitle">90%的年轻人不知道自己存在潜在心脏问题。通过简短测试，了解你的心脏健康状况，获取专业建议。</p>
+                <div class="hero-cta">
+                    <button class="landing-btn">开始评估</button>
+                </div>
+            </div>
+            
+            <div class="tag-container">
+                <div class="tag">现代科技</div>
+                <div class="tag">专业评估</div>
+                <div class="tag">个性化建议</div>
+            </div>
+            
+            <div class="pill-3d-container"></div>
+            
+            <div class="parallax-layer">
+                <div class="layer-1"></div>
+                <div class="layer-2"></div>
+            </div>
+            
+            <div class="landing-scroll-indicator">向下滚动</div>
+        </div>
+    </div>
+
+    <!-- 自定义光标 - 21tsi风格 -->
+    <div class="custom-cursor"></div>
+    <div class="custom-cursor-follower"></div>
+
+    <!-- 动态背景 -->
+    <div class="line-background"></div>
+    <div class="particle-container" id="particles"></div>
+
+    <!-- 3D药丸模型容器 -->
+    <div class="pill-container" id="pill-model"></div>
+
+    <!-- 菜单按钮 -->
+    <div class="menu-toggle">
+        <span>菜单</span>
+    </div>
+
+    <!-- 全屏菜单 -->
+    <div class="menu">
+        <div class="menu-content">
+            <div class="menu-item">主页</div>
+            <div class="menu-item">关于心脏健康</div>
+            <div class="menu-item">HP药厂官网</div>
+            <div class="menu-item">联系我们</div>
+        </div>
+    </div>
+
+    <div class="sound-toggle">
+        <span>声音</span>
+    </div>
+
+    <div class="page-indicator">
+        <div class="indicator-dots">
+            <span class="dot active" data-section="0"></span>
+            <span class="dot" data-section="1"></span>
+            <span class="dot" data-section="2"></span>
+            <span class="dot" data-section="3"></span>
+            <span class="dot" data-section="4"></span>
+            <span class="dot" data-section="5"></span>
+            <span class="dot" data-section="6"></span>
+            <span class="dot" data-section="7"></span>
+            <span class="dot" data-section="8"></span>
+            <span class="dot" data-section="9"></span>
+            <span class="dot" data-section="10"></span>
+            <span class="dot" data-section="11"></span>
+            <span class="dot" data-section="12"></span>
+            <span class="dot" data-section="13"></span>
+        </div>
+        <div class="heart-path-indicator">
+            <svg viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50,10 C10,50 0,90 50,160 C100,90 90,50 50,10" fill="none" stroke="#c2bfd0" stroke-width="1" class="heart-path"/>
+                <circle cx="50" cy="10" r="5" fill="#9d76c7" class="heart-marker"/>
+            </svg>
+        </div>
+    </div>
+
+    <main class="scroll-container">
+        <!-- 欢迎页面 -->
+        <section class="section active" id="welcome">
+            <div class="content-wrapper">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="pill-animation small" id="welcome-pill"></div>
+                <h1 class="large-title">
+                    <span class="fadeInLeft">90%的年轻人</span>
+                    <span class="fadeInRight">不知道自己存在</span>
+                    <span class="fadeInUp">潜在心脏问题</span>
+                </h1>
+                <div class="facts-container fadeInOpacity">
+                    <div class="fact-item">
+                        <div class="fact-number">25%</div>
+                        <div class="fact-text">年轻人存在不健康生活习惯</div>
+                    </div>
+                    <div class="fact-item">
+                        <div class="fact-number">70%</div>
+                        <div class="fact-text">心脏问题可通过早期预防</div>
+                    </div>
+                </div>
+                <div class="scroll-prompt">
+                    <span>了解你的心脏健康状况</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 评估介绍 -->
+        <section class="section assessment-section" id="assessment-intro">
+            <div class="content-wrapper">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="assessment-number">00</div>
+                <h2 class="section-title">心动健康评估</h2>
+                <p class="question">通过简短的生活方式评估和互动测试，了解你的心脏健康状况。整个过程仅需5分钟，为你提供专业的心脏健康建议。</p>
+                
+                <div class="assessment-steps fadeInUp">
+                    <div class="step">
+                        <div class="step-number">01</div>
+                        <div class="step-text">生活习惯评估</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">02</div>
+                        <div class="step-text">互动测试挑战</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">03</div>
+                        <div class="step-text">专业分析报告</div>
+                    </div>
+                </div>
+                
+                <div class="options-container">
+                    <div class="thin-button">
+                        <span>开始评估</span>
+                    </div>
+                </div>
+                
+                <div class="assessment-progress">
+                    <div class="assessment-progress-text">准备好了吗？</div>
+                    <div class="assessment-progress-bar">
+                        <div class="assessment-progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="pill-animation small" id="intro-pill"></div>
+            </div>
+        </section>
+
+        <!-- 运动评估 -->
+        <section class="section assessment-section" id="exercise">
+            <div class="content-wrapper">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="assessment-number">01</div>
+                <h2 class="section-title">生活习惯评估</h2>
+                <p class="question">你多久进行一次中等强度的身体活动？</p>
+                
+                <div class="options-container graphic-options">
+                    <div class="graphic-option" data-value="1">
+                        <div class="graphic-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="50" cy="50" r="40" stroke="#b89fe0" stroke-width="2" fill="none"/>
+                                <path d="M50,30 L50,50 L70,50" stroke="#9d76c7" stroke-width="2" fill="none"/>
+                            </svg>
+                        </div>
+                        <div class="graphic-label">很少或从不</div>
+                    </div>
+                    <div class="graphic-option" data-value="2">
+                        <div class="graphic-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M30,70 L50,30 L70,70" stroke="#b89fe0" stroke-width="2" fill="none"/>
+                                <circle cx="50" cy="30" r="5" fill="#9d76c7"/>
+                            </svg>
+                        </div>
+                        <div class="graphic-label">每月1-2次</div>
+                    </div>
+                    <div class="graphic-option" data-value="3">
+                        <div class="graphic-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20,70 C20,40 40,30 50,30 C60,30 80,40 80,70" stroke="#b89fe0" stroke-width="2" fill="none"/>
+                                <circle cx="50" cy="30" r="5" fill="#9d76c7"/>
+                                <circle cx="25" cy="60" r="3" fill="#9d76c7"/>
+                                <circle cx="75" cy="60" r="3" fill="#9d76c7"/>
+                            </svg>
+                        </div>
+                        <div class="graphic-label">每周1-2次</div>
+                    </div>
+                    <div class="graphic-option" data-value="4">
+                        <div class="graphic-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20,50 L35,40 L50,60 L65,30 L80,50" stroke="#b89fe0" stroke-width="2" fill="none"/>
+                                <circle cx="35" cy="40" r="3" fill="#9d76c7"/>
+                                <circle cx="50" cy="60" r="3" fill="#9d76c7"/>
+                                <circle cx="65" cy="30" r="3" fill="#9d76c7"/>
+                            </svg>
+                        </div>
+                        <div class="graphic-label">每周3-4次</div>
+                    </div>
+                    <div class="graphic-option" data-value="5">
+                        <div class="graphic-icon">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="50" cy="50" r="30" stroke="#b89fe0" stroke-width="2" fill="none"/>
+                                <path d="M40,40 L60,60 M40,60 L60,40" stroke="#9d76c7" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <div class="graphic-label">每周5次及以上</div>
+                    </div>
+                </div>
+                
+                <div class="pill-animation small" id="exercise-pill"></div>
+                
+                <div class="assessment-progress">
+                    <div class="assessment-progress-text">问题 1/12</div>
+                    <div class="assessment-progress-bar">
+                        <div class="assessment-progress-fill" style="width: 8.33%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 饮食习惯评估 -->
+        <section class="section assessment-section" id="diet">
+            <div class="content-wrapper">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="assessment-number">02</div>
+                <h2 class="section-title">饮食习惯评估</h2>
+                <p class="question">拖拽你日常经常食用的食物到餐盘中（可多选）</p>
+                
+                <div class="drag-drop-container">
+                    <div class="food-items">
+                        <div class="food-item" draggable="true" data-value="vegetables">
+                            <div class="food-icon">🥦</div>
+                            <div class="food-label">蔬菜</div>
+                        </div>
+                        <div class="food-item" draggable="true" data-value="fruits">
+                            <div class="food-icon">🍎</div>
+                            <div class="food-label">水果</div>
+                        </div>
+                        <div class="food-item" draggable="true" data-value="meat">
+                            <div class="food-icon">🥩</div>
+                            <div class="food-label">肉类</div>
+                        </div>
+                        <div class="food-item" draggable="true" data-value="fish">
+                            <div class="food-icon">🐟</div>
+                            <div class="food-label">鱼类</div>
+                        </div>
+                        <div class="food-item" draggable="true" data-value="dairy">
+                            <div class="food-icon">🧀</div>
+                            <div class="food-label">奶制品</div>
+                        </div>
+                        <div class="food-item" draggable="true" data-value="fastfood">
+                            <div class="food-icon">🍔</div>
+                            <div class="food-label">快餐</div>
+                        </div>
+                        <div class="food-item" draggable="true" data-value="sweets">
+                            <div class="food-icon">🍰</div>
+                            <div class="food-label">甜食</div>
+                        </div>
+                        <div class="food-item" draggable="true" data-value="soda">
+                            <div class="food-icon">🥤</div>
+                            <div class="food-label">碳酸饮料</div>
+                        </div>
+                    </div>
+                    <div class="plate-container">
+                        <div class="plate" id="food-plate">
+                            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="100" cy="100" r="90" fill="#F4F0EC" stroke="#b89fe0" stroke-width="2"/>
+                                <circle cx="100" cy="100" r="70" fill="none" stroke="#b89fe0" stroke-width="1" stroke-dasharray="2,2"/>
+                            </svg>
+                        </div>
+                        <div class="plate-items" id="plate-items"></div>
+                    </div>
+                </div>
+                
+                <div class="thin-button">
+                    <span>继续</span>
+                </div>
+                
+                <div class="pill-animation small" id="diet-pill"></div>
+                
+                <div class="assessment-progress">
+                    <div class="assessment-progress-text">问题 2/12</div>
+                    <div class="assessment-progress-bar">
+                        <div class="assessment-progress-fill" style="width: 16.67%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 睡眠评估 -->
+        <section class="section assessment-section" id="sleep">
+            <div class="content-wrapper">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="assessment-number">03</div>
+                <h2 class="section-title">睡眠质量评估</h2>
+                <p class="question">调整滑块表示你的典型睡眠时间和质量</p>
+                
+                <div class="sleep-assessment-container">
+                    <div class="sleep-time-slider">
+                        <div class="slider-label">平均睡眠时间</div>
+                        <div class="slider-container">
+                            <input type="range" min="3" max="12" value="7" class="range-slider" id="sleep-time">
+                            <div class="slider-value"><span id="sleep-time-value">7</span>小时</div>
+                        </div>
+                        <div class="slider-markers">
+                            <span>3</span>
+                            <span>6</span>
+                            <span>9</span>
+                            <span>12</span>
+                        </div>
+                    </div>
+                    
+                    <div class="sleep-quality-slider">
+                        <div class="slider-label">睡眠质量</div>
+                        <div class="slider-container">
+                            <input type="range" min="1" max="5" value="3" class="range-slider" id="sleep-quality">
+                            <div class="slider-value"><span id="sleep-quality-text">一般</span></div>
+                        </div>
+                        <div class="slider-markers quality-markers">
+                            <span>很差</span>
+                            <span>差</span>
+                            <span>一般</span>
+                            <span>好</span>
+                            <span>很好</span>
+                        </div>
+                    </div>
+                    
+                    <div class="sleep-visual">
+                        <div class="moon-visual">
+                            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M50,15 A35,35 0 1,1 50,85 A25,25 0 1,0 50,15" fill="#b89fe0" id="moon-path"/>
+                            </svg>
+                        </div>
+                        <div class="stars-container" id="stars-container"></div>
+                    </div>
+                </div>
+                
+                <div class="thin-button">
+                    <span>继续</span>
+                </div>
+                
+                <div class="pill-animation small" id="sleep-pill"></div>
+                
+                <div class="assessment-progress">
+                    <div class="assessment-progress-text">问题 3/12</div>
+                    <div class="assessment-progress-bar">
+                        <div class="assessment-progress-fill" style="width: 25%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 压力水平评估 -->
+        <section class="section assessment-section" id="stress">
+            <div class="content-wrapper">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="assessment-number">04</div>
+                <h2 class="section-title">压力水平评估</h2>
+                <p class="question">按压药丸释放你的压力，力度代表你的压力水平</p>
+                
+                <div class="stress-container">
+                    <div class="stress-instruction">长按药丸</div>
+                    <div class="stress-pill-container" id="stress-pill-container">
+                        <div class="stress-pill" id="stress-pill">
+                            <div class="stress-pill-inner"></div>
+                        </div>
+                        <div class="stress-particles" id="stress-particles"></div>
+                    </div>
+                    <div class="stress-level">
+                        <div class="stress-level-bar">
+                            <div class="stress-level-fill" id="stress-level-fill"></div>
+                        </div>
+                        <div class="stress-level-labels">
+                            <span>低压力</span>
+                            <span>中等压力</span>
+                            <span>高压力</span>
+                        </div>
+                    </div>
+                    <div class="stress-value" id="stress-value">0%</div>
+                </div>
+                
+                <div class="thin-button">
+                    <span>继续</span>
+                </div>
+                
+                <div class="pill-animation small" id="stress-indication-pill"></div>
+                
+                <div class="assessment-progress">
+                    <div class="assessment-progress-text">问题 4/12</div>
+                    <div class="assessment-progress-bar">
+                        <div class="assessment-progress-fill" style="width: 33.33%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 心脏健康知识问答1 -->
+        <section class="section assessment-section" id="quiz1">
+            <div class="content-wrapper">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="assessment-number">05</div>
+                <h2 class="section-title">心率知识测试</h2>
+                <p class="question">正常成年人的静息心率范围是多少？</p>
+                
+                <div class="options-container">
+                    <div class="option animated-option">
+                        <input type="radio" id="quiz1-1" name="quiz1" value="1">
+                        <label for="quiz1-1">40-50次/分钟</label>
+                    </div>
+                    <div class="option animated-option">
+                        <input type="radio" id="quiz1-2" name="quiz1" value="2">
+                        <label for="quiz1-2">60-100次/分钟</label>
+                    </div>
+                    <div class="option animated-option">
+                        <input type="radio" id="quiz1-3" name="quiz1" value="3">
+                        <label for="quiz1-3">100-120次/分钟</label>
+                    </div>
+                    <div class="option animated-option">
+                        <input type="radio" id="quiz1-4" name="quiz1" value="4">
+                        <label for="quiz1-4">120-150次/分钟</label>
+                    </div>
+                </div>
+                
+                <div class="heart-rate-visual">
+                    <div class="heart-icon pulse"></div>
+                    <div class="heart-rate-line" id="heart-rate-line">
+                        <svg viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
+                            <path class="heart-line active" d="M0,50 L30,50 L45,20 L60,80 L75,20 L90,80 L105,20 L120,80 L135,50 L300,50" stroke="#9d76c7" stroke-width="2" fill="none"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="pill-animation small" id="quiz1-pill"></div>
+                
+                <div class="assessment-progress">
+                    <div class="assessment-progress-text">问题 5/12</div>
+                    <div class="assessment-progress-bar">
+                        <div class="assessment-progress-fill" style="width: 41.67%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 心脏健康知识问答2 -->
+        <section class="section assessment-section" id="quiz2">
+            <div class="content-wrapper">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="assessment-number">06</div>
+                <h2 class="section-title">生活习惯风险测试</h2>
+                <p class="question">以下哪种生活习惯对心脏健康影响最大？</p>
+                
+                <div class="options-container">
+                    <div class="option icon-option">
+                        <input type="radio" id="quiz2-1" name="quiz2" value="1">
+                        <label for="quiz2-1"><span class="option-icon">🚬</span>吸烟</label>
+                    </div>
+                    <div class="option icon-option">
+                        <input type="radio" id="quiz2-2" name="quiz2" value="2">
+                        <label for="quiz2-2"><span class="option-icon">🍔</span>高脂饮食</label>
+                    </div>
+                    <div class="option icon-option">
+                        <input type="radio" id="quiz2-3" name="quiz2" value="3">
+                        <label for="quiz2-3"><span class="option-icon">🛋️</span>久坐不动</label>
+                    </div>
+                    <div class="option icon-option">
+                        <input type="radio" id="quiz2-4" name="quiz2" value="4">
+                        <label for="quiz2-4"><span class="option-icon">🧂</span>高盐饮食</label>
+                    </div>
+                </div>
+                
+                <div class="fact-box fadeInUp">
+                    <div class="fact-title">你知道吗？</div>
+                    <div class="fact-content">年轻人心脏健康问题正在上升，主要原因是生活方式的改变。</div>
+                </div>
+                
+                <div class="pill-animation small" id="quiz2-pill"></div>
+                
+                <div class="assessment-progress">
+                    <div class="assessment-progress-text">问题 6/12</div>
+                    <div class="assessment-progress-bar">
+                        <div class="assessment-progress-fill" style="width: 50%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 生活场景选择 -->
+        <section class="section assessment-section" id="life-scenario">
+            <div class="content-wrapper">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="assessment-number">07</div>
+                <h2 class="section-title">生活场景选择</h2>
+                <p class="question">选择最符合你日常生活状态的场景</p>
+                
+                <div class="scenario-container">
+                    <div class="scenario-option" data-value="1">
+                        <div class="scenario-image">
+                            <div class="scenario-icon">🏢</div>
+                            <div class="scenario-gradient"></div>
+                        </div>
+                        <div class="scenario-text">
+                            <div class="scenario-title">办公室工作</div>
+                            <div class="scenario-description">长时间坐着，高强度工作，压力大</div>
+                        </div>
+                    </div>
+                    <div class="scenario-option" data-value="2">
+                        <div class="scenario-image">
+                            <div class="scenario-icon">🏃</div>
+                            <div class="scenario-gradient"></div>
+                        </div>
+                        <div class="scenario-text">
+                            <div class="scenario-title">活跃生活</div>
+                            <div class="scenario-description">经常锻炼，户外活动多，工作与生活平衡</div>
+                        </div>
+                    </div>
+                    <div class="scenario-option" data-value="3">
+                        <div class="scenario-image">
+                            <div class="scenario-icon">🎮</div>
+                            <div class="scenario-gradient"></div>
+                        </div>
+                        <div class="scenario-text">
+                            <div class="scenario-title">数字生活</div>
+                            <div class="scenario-description">长时间看屏幕，喜欢在线娱乐，常熬夜</div>
+                        </div>
+                    </div>
+                    <div class="scenario-option" data-value="4">
+                        <div class="scenario-image">
+                            <div class="scenario-icon">📚</div>
+                            <div class="scenario-gradient"></div>
+                        </div>
+                        <div class="scenario-text">
+                            <div class="scenario-title">学习压力</div>
+                            <div class="scenario-description">长时间学习，缺乏运动，压力大</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pill-animation small" id="scenario-pill"></div>
+                
+                <div class="assessment-progress">
+                    <div class="assessment-progress-text">问题 7/12</div>
+                    <div class="assessment-progress-bar">
+                        <div class="assessment-progress-fill" style="width: 58.33%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 生活方式场景 -->
+        <section class="section assessment-section" id="lifestyle">
+            <div class="content-wrapper">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="assessment-number">07</div>
+                <h2 class="section-title">您的生活方式</h2>
+                <p class="question">哪种场景最能描述您的典型一天？</p>
+                
+                <div class="options-container">
+                    <div class="option">
+                        <input type="radio" id="lifestyle-1" name="lifestyle" value="1">
+                        <label for="lifestyle-1">主要久坐，屏幕时间>8小时</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="lifestyle-2" name="lifestyle" value="2">
+                        <label for="lifestyle-2">中等久坐，偶尔活动</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="lifestyle-3" name="lifestyle" value="3">
+                        <label for="lifestyle-3">久坐和活动时间混合</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="lifestyle-4" name="lifestyle" value="4">
+                        <label for="lifestyle-4">大部分活动，有一些休息时间</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="lifestyle-5" name="lifestyle" value="5">
+                        <label for="lifestyle-5">全天高度活跃</label>
+                    </div>
+                </div>
+                
+                <div class="assessment-progress">
+                    <div class="assessment-progress-text">问题 7/9</div>
+                    <div class="assessment-progress-bar">
+                        <div class="assessment-progress-fill" style="width: 77%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 家族病史调查 -->
+        <section class="section assessment-section" id="family-history">
+            <div class="content-wrapper">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="assessment-number">08</div>
+                <h2 class="section-title">家族病史调查</h2>
+                <p class="question">你的直系亲属中是否有以下心脏健康问题？（可多选）</p>
+                
+                <div class="options-container checkbox-container">
+                    <div class="option checkbox">
+                        <input type="checkbox" id="history-1" name="family-history" value="1">
+                        <label for="history-1">高血压</label>
+                    </div>
+                    <div class="option checkbox">
+                        <input type="checkbox" id="history-2" name="family-history" value="2">
+                        <label for="history-2">高胆固醇</label>
+                    </div>
+                    <div class="option checkbox">
+                        <input type="checkbox" id="history-3" name="family-history" value="3">
+                        <label for="history-3">心脏病</label>
+                    </div>
+                    <div class="option checkbox">
+                        <input type="checkbox" id="history-4" name="family-history" value="4">
+                        <label for="history-4">糖尿病</label>
+                    </div>
+                    <div class="option checkbox">
+                        <input type="checkbox" id="history-5" name="family-history" value="5">
+                        <label for="history-5">中风</label>
+                    </div>
+                    <div class="option checkbox">
+                        <input type="checkbox" id="history-6" name="family-history" value="6">
+                        <label for="history-6">没有已知的心脏问题</label>
+                    </div>
+                </div>
+                
+                <div class="family-tree">
+                    <svg viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="150" y1="30" x2="150" y2="60" stroke="#b89fe0" stroke-width="1"/>
+                        <line x1="70" y1="60" x2="230" y2="60" stroke="#b89fe0" stroke-width="1"/>
+                        <line x1="70" y1="60" x2="70" y2="90" stroke="#b89fe0" stroke-width="1"/>
+                        <line x1="150" y1="60" x2="150" y2="90" stroke="#b89fe0" stroke-width="1"/>
+                        <line x1="230" y1="60" x2="230" y2="90" stroke="#b89fe0" stroke-width="1"/>
+                        
+                        <circle cx="150" cy="30" r="15" fill="#9d76c7" class="family-node" id="node-grandparent"/>
+                        <circle cx="70" cy="90" r="15" fill="#b89fe0" class="family-node" id="node-parent1"/>
+                        <circle cx="150" cy="90" r="15" fill="#9d76c7" class="family-node" id="node-self"/>
+                        <circle cx="230" cy="90" r="15" fill="#b89fe0" class="family-node" id="node-parent2"/>
+                    </svg>
+                </div>
+                
+                <div class="pill-animation small" id="family-pill"></div>
+                
+                <div class="assessment-progress">
+                    <div class="assessment-progress-text">问题 8/12</div>
+                    <div class="assessment-progress-bar">
+                        <div class="assessment-progress-fill" style="width: 66.67%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 个人症状自测 -->
+        <section class="section assessment-section" id="symptoms">
+            <div class="content-wrapper">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="assessment-number">09</div>
+                <h2 class="section-title">个人症状自测</h2>
+                <p class="question">在过去一个月内，你是否经历过以下任何症状？（可多选）</p>
+                
+                <div class="options-container checkbox-container">
+                    <div class="option checkbox symptom-option">
+                        <input type="checkbox" id="symptom-1" name="symptoms" value="1">
+                        <label for="symptom-1">胸痛或胸部不适</label>
+                    </div>
+                    <div class="option checkbox symptom-option">
+                        <input type="checkbox" id="symptom-2" name="symptoms" value="2">
+                        <label for="symptom-2">气短或呼吸困难</label>
+                    </div>
+                    <div class="option checkbox symptom-option">
+                        <input type="checkbox" id="symptom-3" name="symptoms" value="3">
+                        <label for="symptom-3">心悸或心跳加速</label>
+                    </div>
+                    <div class="option checkbox symptom-option">
+                        <input type="checkbox" id="symptom-4" name="symptoms" value="4">
+                        <label for="symptom-4">头晕或昏厥</label>
+                    </div>
+                    <div class="option checkbox symptom-option">
+                        <input type="checkbox" id="symptom-5" name="symptoms" value="5">
+                        <label for="symptom-5">疲劳或无力</label>
+                    </div>
+                    <div class="option checkbox symptom-option">
+                        <input type="checkbox" id="symptom-6" name="symptoms" value="6">
+                        <label for="symptom-6">踝部或腿部水肿</label>
+                    </div>
+                    <div class="option checkbox symptom-option">
+                        <input type="checkbox" id="symptom-7" name="symptoms" value="7">
+                        <label for="symptom-7">没有出现任何症状</label>
+                    </div>
+                </div>
+                
+                <div class="body-map">
+                    <svg viewBox="0 0 100 200" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50,30 C30,30 25,50 25,60 C25,70 35,85 50,85 C65,85 75,70 75,60 C75,50 70,30 50,30" fill="none" stroke="#b89fe0" stroke-width="1"/>
+                        <path d="M40,60 C40,55 45,50 50,50 C55,50 60,55 60,60 C60,65 55,70 50,70 C45,70 40,65 40,60" fill="#9d76c7" opacity="0.5" class="body-part" id="body-part-heart"/>
+                        <path d="M35,40 L65,40" stroke="#b89fe0" stroke-width="1"/>
+                        <path d="M40,85 L40,130 M60,85 L60,130" stroke="#b89fe0" stroke-width="1"/>
+                        <path d="M40,130 L30,180 M60,130 L70,180" stroke="#b89fe0" stroke-width="1"/>
+                    </svg>
+                </div>
+                
+                <div class="pill-animation small" id="symptoms-pill"></div>
+                
+                <div class="assessment-progress">
+                    <div class="assessment-progress-text">问题 9/12</div>
+                    <div class="assessment-progress-bar">
+                        <div class="assessment-progress-fill" style="width: 75%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BMI -->
+        <section class="section assessment-section" id="bmi">
+            <div class="content-wrapper">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="assessment-number">10</div>
+                <h2 class="section-title">身体指标</h2>
+                <p class="question">您的BMI范围是？</p>
+                
+                <div class="options-container">
+                    <div class="option">
+                        <input type="radio" id="bmi-1" name="bmi" value="1">
+                        <label for="bmi-1">低于18.5（体重过轻）</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="bmi-2" name="bmi" value="2">
+                        <label for="bmi-2">18.5-24.9（正常）</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="bmi-3" name="bmi" value="3">
+                        <label for="bmi-3">25-29.9（超重）</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="bmi-4" name="bmi" value="4">
+                        <label for="bmi-4">30-34.9（肥胖）</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="bmi-5" name="bmi" value="5">
+                        <label for="bmi-5">35或更高（严重肥胖）</label>
+                    </div>
+                </div>
+                
+                <div class="assessment-progress">
+                    <div class="assessment-progress-text">最后一步</div>
+                    <div class="assessment-progress-bar">
+                        <div class="assessment-progress-fill" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 处理中 -->
+        <section class="section" id="processing">
+            <div class="content-wrapper">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="large-processing-title">分析中</div>
+                <div class="progress-container processing-progress">
+                    <div class="progress-bar"></div>
+                </div>
+                <p class="processing-text">正在处理您的心脏健康档案...</p>
+            </div>
+        </section>
+
+        <!-- 结果 -->
+        <section class="section" id="results">
+            <div class="content-wrapper">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <h2 class="section-title">您的心脏指数：</h2>
+                <div class="score-display">75</div>
+                <div class="risk-level">中等风险</div>
+                
+                <!-- 添加图表容器 -->
+                <div class="chart-container">
+                    <canvas id="resultsChart"></canvas>
+                </div>
+                
+                <div class="recommendation">
+                    <h3>为您的档案推荐：</h3>
+                    <div class="product">
+                        <div class="product-name">心动活力素</div>
+                        <p class="product-description">一种平衡的补充剂，专为中等风险档案设计，支持心血管健康并维持心脏健康。</p>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <div class="thin-button">
+                        <span>了解更多</span>
+                    </div>
+                    <div class="thin-button share">
+                        <span>分享结果</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/script.js"></script>
+    <script src="js/landing.js"></script>
+</body>
+</html> 
